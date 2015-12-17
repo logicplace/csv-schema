@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>CSV Schema 1.0</title>
+    <title>CSV Schema 1.1</title>
     <meta charset='utf-8'/>
     <script src='http://www.w3.org/Tools/respec/respec-w3c-common' class='remove'></script>
     <script class='remove'>
@@ -18,7 +18,7 @@
           subtitle   :  "A Language for Defining and Validating CSV Data",
 
           // if you wish the publication date to be other than today, set this
-          publishDate:  "2014-08-23",
+          // publishDate:  "2014-08-23",
 
           // if the specification's copyright date is a range of years, specify
           // the start date here:
@@ -26,12 +26,13 @@
 
           // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
           // and its maturity status
-          // previousPublishDate:  "1977-03-15",
-          // previousMaturity:  "WD",
+          previousMaturity:  "ED",
+          previousPublishDate:  "2014-08-23",
+		  previousURI:   "http://digital-preservation.github.io/csv-schema/csv-schema-1.0.html",
 
           // if there a publicly available Editor's Draft, this is the link
           // edDraftURI:           "http://dev.w3.org/2009/dap/ReSpec.js/documentation.html",
-          edDraftURI:           "http://digital-preservation.github.io/csv-schema/csv-schema-1.0.html",
+          edDraftURI:           "http://digital-preservation.github.io/csv-schema/csv-schema-1.1.html",
 
           // if this is a LCWD, uncomment and set the end of its review period
           // lcEnd: "2009-08-05",
@@ -173,7 +174,7 @@
   </head>
   <body>
     <section id="sotd">
-      This document represents the specification of the CSV Schema 1.0 language
+      This document represents the specification of the CSV Schema 1.1 language
       as defined by <a href="http://www.nationalarchives.gov.uk">The National Archives</a>.
       It is unclear yet whether this document will be submitted to a formal standards body
       such as the <a href="http://w3.org">W3C</a>.
@@ -272,8 +273,8 @@
 			</li>
 		</ol>
         <p>Let's now illustrate a simple CSV Schema that is concerned with CSV data about names, ages and gender:</p>
-        <pre class="example" title="Simple CSV Schema">
-version 1.0
+        <pre class="example" data-lt="Simple CSV Schema">
+version 1.1
 @totalColumns 3
 name: notEmpty
 age: range(0, 120)
@@ -284,14 +285,14 @@ gender: is("m") or is("f") or is("t") or is("n")
             must be a number between 0 and 120 inclusive; and the third column, <em>gender</em>,
             must be one of the characters m, f, t or n. An example of CSV data that would match the
             rule definitions in the CSV schema could be as follows:
-            <pre class="example" title="Valid CSV Data">
+            <pre class="example" data-lt="Valid CSV Data">
 name,age,gender
 james,21,m
 lauren,19,f
 simon,57,m
         </pre>
     	<p>An example of CSV data would fail the rule definitions in the CSV schema could be as follows:</p>
-        <pre class="example" title="Invalid CSV Data">
+        <pre class="example" data-lt="Invalid CSV Data">
 name,age,gender
 james,4 years,m
 lauren,19,f
@@ -299,6 +300,36 @@ simon,57,male
         </pre>
         <p>The Invalid CSV Data example above fails when validated against the CSV Schema because: 1) at row 2 column 2, "4 years" is not a number between 1 and 120 inclusive, and 2) at row 4 column 3, "male" is not one of the characters m, f, t, or n.</p>
     </section>
+	<section id="new-in-1.1" class="informative">
+		<h1>New in CSV Schema 1.1 - A brief introduction to the new features of CSV Schema 1.1</h1>
+		<p>
+		The last 18 months with CSV Schema being in regular use at The National Archives has highlighted a few additional 
+		<a title="Column Validation Expression">Column Validation Expressions</a> that would provide further useful validation, simplify schema writing, or make schemas more readable.  
+		In addition the concept of a <a>String Provider</a> has been extended to allow concatenation
+		to produce a final string input to expressions from some set of other <a title="String Provider">String Providers</a>, and also a function to allow removal of a Windows file
+		extension to make certain comparisons more straightforward and robust.
+		</p>
+		<p>
+		The new <a title="Column Validation Expression">Column Validation Expressions</a> are the:
+		<ol>
+			<li><a>Upper Case Expression</a>, which asserts that all the characters in the column must be uppercase (according to the definitions in [[UTF-8]]).</li>
+			<li><a>Lower Case Expression</a>, which asserts that all the characters in the column must be lowercase (according to the definitions in [[UTF-8]]).</li>
+			<li><a>Integrity Check Expression</a>, this is effectively the converse of the <a>File Exists Expression</a>, checking that if there is a file present
+			in the folders referred to in a CSV file, it has an explicit reference within that CSV fil.e</li>
+			<li><a>XSD Date Time With Timezone Expression</a>, this expression adapts the existing <a>XSD Date Time Expression</a> to make the timezone portion mandatory.</li>
+			<li><a>Identical Expression</a>, this asserts that all values in a certain column must be identical, but does not specify the precise value within the schema.  
+			Within the CSV files received by The National Archives this is expected to be used in conjunction with a <a>Regular Expression Expression</a> to give the general form
+			for a batchcode field for a project, each line in a CSV should have the same batchcode, but we do not want to update the schema for each batch received to state 
+			the exact batchcode.</li>
+			<li><a>Any Expression</a>, this is effectively a combination of the <a>Is Expression</a> and the <a>Or Expression</a> into one expression.</li>
+			<li><a>Switch Expression</a>, this allows a flatter expression of what would otherwise have to be expressed as a set of nested <a title="If Expression">If Expressions</a>.
+			Such expressions can be hard to read and maintain due to the number of sets of brackets that can be involved.</li>
+		</ol>
+		In addition the <a>Range Expression</a> has been extended to allow the creation of ranges that have only an upper or lower bound using similar syntax to that employed by
+		the <a>Length Expression</a>. This also required the addition of <a>Numeric Or Any</a> type (to allow ranges to have negative values as bounds), or the <a>Wildcard Literal</a>. 
+		In the <a>Length Expression</a> we used only <a>Positive Integer Or Any</a> since a negative value has no sensible meaning for the length of a field.
+		</p>
+	</section>
     <section>
 		<h1>Schema structure</h1>
 		<p>
@@ -312,12 +343,12 @@ simon,57,male
 		and examples of correct usage.
 		</p>
 		<p>
-		A CSV schema MUST comprise both <a>Prolog</a> and <a>Body</a>.
+		A <dfn>Schema</dfn> MUST comprise both <a>Prolog</a> and <a>Body</a>.
 		</p>
 		<table class="ebnf-table">
 			<tr>
 				<td class="ebnf-num">[1]</td>
-				<td class="ebnf-left"><a title="ebnf-schema"><dfn>Schema</dfn></a></td>
+				<td class="ebnf-left"><a title="ebnf-schema">Schema</a></td>
 				<td class="ebnf-bind">::=</td>
 				<td class="ebnf-right"><a>Prolog</a> <a>Body</a></td>
 			</tr>
@@ -337,8 +368,9 @@ simon,57,male
 				<h3>Version Declaration</h3>
 				<p>
 				The <dfn>Version Declaration</dfn> declares explicitly which version of the CSV Schema language is in use. 
-				At present this MUST be fixed to <code>version 1.0</code>. 
+				This MUST be either <code>version 1.0</code> or <code>version 1.1</code>. 
 				If the version is not valid this is considered a <a>Schema Error</a>. 
+				If the version is declared as 1.0 but the CSV Schema attempts to use features of 1.1 this is also considered a <a>Schema Error</a>.
 				The Version Declaration is MANDATORY.
 				</p>
 				<table class="ebnf-table">
@@ -346,12 +378,12 @@ simon,57,male
 						<td class="ebnf-num">[3]</td>
 						<td class="ebnf-left"><a title="ebnf-version-decl"><dfn>VersionDecl</dfn></a></td>
 						<td class="ebnf-bind">::=</td>
-						<td class="ebnf-right">"version 1.0"</td>
+						<td class="ebnf-right">("version 1.0" | "version 1.1")</td>
 					</tr>
 				</table>
 					<section>
 						<h4>Example Version Declaration</h4>
-						<pre class="example" title="Version Declaration Syntax">
+						<pre class="example" data-lt="Version Declaration Syntax">
 		version 1.0
 						</pre>
 				</section>
@@ -503,10 +535,10 @@ simon,57,male
 				</section>
 				<section>
 					<h4>Example Global Directives</h4>
-					<pre class="example" title="Global Directives Syntax 1">
+					<pre class="example" data-lt="Global Directives Syntax 1">
 	@separator ';' @quoted @totalColumns 21 @noHeader
 					</pre>
-					<pre class="example" title="Global Directives Syntax 2">
+					<pre class="example" data-lt="Global Directives Syntax 2">
 	@separator TAB
 	@quoted
 	@totalColumns 21
@@ -579,7 +611,7 @@ simon,57,male
 				</table>
 				<section>
 					<h4>Example Comments</h4>
-					<pre class="example" title="Comment Syntax">
+					<pre class="example" data-lt="Comment Syntax">
 	//This Comment is a Single Line Comment it terminates at this line break
 	/*This Comment is a Multi Line Comment:
 	
@@ -741,7 +773,7 @@ simon,57,male
 							wrote down an "impossible" date such as 30 February or 31 April. We have to do our best to accept the data as originally supplied 
 							(we have no idea if it is the day or month of the date which is actually incorrect), but we also wish to ensure that additional 
 							Quality Assurance checking is performed to ensure this is not a transcription error. Warnings are listed in the validation report, 
-							but the data file is still considered valid if only warnings are present.
+							but the data file MAY still considered valid if only warnings are present.
 							</p>
 							<table class="ebnf-table">
 								<tr>
@@ -756,7 +788,7 @@ simon,57,male
 				</section>
 				<section>
 					<h4>Column Definitions examples</h4>
-					<pre class="example" title="Column Definition Syntax">
+					<pre class="example" data-lt="Column Definition Syntax">
 	a_column_title:			is("somedata") or is("otherdata")        	@optional @matchIsFalse @ignoreCase @warning
 	another_column_title:	isNot("somedata") and isNot("otherdata")	@ignoreCase
 					</pre>
@@ -805,7 +837,9 @@ simon,57,male
     			A <dfn>Combinatorial Expression</dfn> combines one or more <a title="Column Validation Expression">Column Validation Expressions</a>, which allows more complicated tests 
     			on the validity of data in a column.  
     			There are two types, <a title="Or Expression">Or Expressions</a> and <a title="And Expression">And Expressions</a>. 
-    			They are of equal precedence, and evaluation of <a title="Column Validation Expression">Column Validation Expressions</a> is performed from <em>left-to-right</em>.
+    			They are of equal precedence, and evaluation of <a title="Column Validation Expression">Column Validation Expressions</a> is performed from <em>left-to-right</em>.  
+				See also the <a>Any Expression</a> which is logically equivalent to a series of <a title="Is Expression">Is Expressions</a> 
+				joined by <a title="Or Expression">Or Expressions</a>.
     		</p>
     		<table class="ebnf-table">
     			<tr>
@@ -851,7 +885,8 @@ simon,57,male
     	
     	<section>
     		<h2>Non Combinatorial Expressions</h2>
-    		<p>A <dfn>Non Combinatorial Expression</dfn> is a Column Validation Expression which is evaluated by itself, unless it is combined with another through a <a>Combinatorial Expression</a>.
+    		<p>A <dfn>Non Combinatorial Expression</dfn> is a Column Validation Expression which is evaluated by itself, 
+			unless it is combined with another through a <a>Combinatorial Expression</a>.
     		The majority of Column Validation Expressions are of the Non-Combinatorial Expression class.</p>
     		<table class="ebnf-table">
     			<tr>
@@ -920,6 +955,25 @@ simon,57,male
 								<td class="ebnf-left"><a title="ebnf-is-expr"><dfn>IsExpr</dfn></a></td>
 								<td class="ebnf-bind">::=</td>
 								<td class="ebnf-right">"is(" <a>StringProvider</a> ")"</td> 
+							</tr>
+						</table>	
+					</section>
+					<section>
+						<h4>Any Expressions</h4>
+						<p>
+						<em>This is a new expression in CSV Schema Language 1.1</em>
+						</p>
+						<p>
+						An <dfn>Any Expression</dfn> checks that the value of the column is identical to one of the supplied strings or the values in the referenced columns.
+						This is logically equivalent to a series of <a title="Is Expression">Is Expressions</a> joined by <a title="Or Expression">Or Expressions</a>, 
+						but slightly more compact to write and maintain.
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-any-expr"><dfn>AnyExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"any(" <a>StringProvider</a> {"," <a>StringProvider</a>} ")"</td> 
 							</tr>
 						</table>	
 					</section>
@@ -1002,15 +1056,34 @@ simon,57,male
 					<section>
 						<h4>Range Expressions</h4>
 						<p>
+						<em>The definition of this expression in CSV Schema Language 1.1 extends the definition originally made in CSV Schema Language 1.0</em>
+						</p>
+						<p>
 						A <dfn>Range Expression</dfn> checks that the value of the column is a number lying between, or equal to, the supplied upper and lower bounds.  
-						The bounding values are defined as <a title="Numeric Literal">Numeric Literals</a> which accept real numbers expressed as decimals.
+						One or other bounding value MAY be left unrestricted (by using the <a>Wildcard Literal</a>), 
+						so that the expression can also be used to check that a column is at least some value, or at most some value. 
+						One bounding value is defined as a <a>Numeric Or Any</a> expression which accepts a <a>Numeric Literal</a> (a Real Number expressed as a decimal), 
+						or the <a>Wildcard Literal</a>, while the other is a <a>Numeric Literal</a> only. 
+						Therefore at least one of the bounding values MUST be a <a>Numeric Literal</a> rather than a <a>Wildcard Literal</a>, 
+						so valid Range Expressions SHALL define ranges of:
+						<ol>
+							<li>At least <em>n</em>. For example <code>range(10, *)</code> states that the column value MUST be <em>at least</em> 10</li>
+							<li>At most <em>n</em>. For example <code>range(*, 10)</code> ensures that the column value MUST be <em>at most</em> 10 (and may be negative).</li>
+							<li>Between <em>m</em> and <em>n</em>(inclusive). For example <code>range(4, 7)</code> ensures that the column value MUST be <em>between</em> 4 and 7 (inclusive).</li>
+						</ol>
 						</p>
 						<table class="ebnf-table">
 							<tr>
 								<td class="ebnf-num">[42]</td>
 								<td class="ebnf-left"><a title="ebnf-range-expr"><dfn>RangeExpr</dfn></a></td>
 								<td class="ebnf-bind">::=</td>
-								<td class="ebnf-right">"range(" <a>NumericLiteral</a> "," <a>NumericLiteral</a> ")"</td> 
+								<td class="ebnf-right">"range(" (<a>NumericOrAny</a> "," <a>NumericLiteral</a> | <a>NumericLiteral</a> "," <a>NumericOrAny</a>) ")"</td>
+							</tr>
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-numeric-literal-or-any"><dfn>NumericOrAny</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right"><a>NumericLiteral</a> | <a>WildcardLiteral</a></td> 
 							</tr>
 						</table>	
 					</section>
@@ -1021,7 +1094,7 @@ simon,57,male
 							<li>Precisely <em>n</em> characters long. For example <code>length(10)</code> ensures that the length is <em>exactly</em> 10 characters.</li>
 							<li>At least <em>n</em> characters long. For example <code>length(10, *)</code> ensures that the length is <em>at least</em> 10 or more characters</li>
 							<li>At most <em>n</em> characters long. For example <code>length(*, 10)</code> ensures that the length is <em>at most</em> 10 characters.</li>
-							<li>Between <em>m</em> and <em>n</em> characters long (inclusive). For example <code>length(4, 7)</code> ensures that the length is at least 4 characters and at most 7 characters.</li>
+							<li>Between <em>m</em> and <em>n</em> characters long (inclusive). For example <code>length(4, 7)</code> ensures that the length is at least 4 characters and at most 10 characters.</li>
 						</ol>
 						<p>
 							In order to do this the expression takes two input parameters, the first is defined as OPTIONAL, the second MUST be supplied.  Both take the form of a 
@@ -1116,6 +1189,24 @@ simon,57,male
 								<td class="ebnf-right">"xDateTime" ("(" <a>XsdDateTimeLiteral</a> "," <a>XsdDateTimeLiteral</a> ")")?</td> 
 							</tr>
 						</table>	
+					</section>
+					<section>
+						<h4>XSD Date Time With Time Zone Expressions</h4>
+						<p>
+						An <dfn>XSD Date Time With Time Zone Expression</dfn> is identical to <a>XSD Date Time Expression</a> except that it uses <a>XSD Date Time With Time Zone Literal</a>
+						rather than <a>XSD Time Literal</a>, which means that the time zone component in [[!XMLSCHEMA-2]] and [[!ISO8601]] MUST be used. 
+						Again, you can also provide an OPTIONAL <em>from</em> and <em>to</em> date-times, 
+						(inclusive) to ensure that the value in the column falls within an expected date-time range. 
+						These are also defined as <a>XSD Date Time With Time Zone Literal</a> so MUST have the time zone component.
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-xsd-date-time-with-time-zone-expr"><dfn>XsdDateTimeWithTimeZoneExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"xDateTime" ("(" <a>XsdDateTimeWithTimeZoneLiteral</a> "," <a>XsdDateTimeWithTimeZoneLiteral</a> ")")?</td> 
+							</tr>
+						</table>
 					</section>
 					<section>
 						<h4>XSD Date Expressions</h4>
@@ -1246,6 +1337,85 @@ simon,57,male
 							</tr>
 						</table>
 					</section>
+					<section>
+						<h4>Upper Case Expression</h4>
+						<p>
+						<em>This is a new expression in CSV Schema Language 1.1</em>
+						</p>
+						<p>
+						An <dfn>Upper Case Expression</dfn> checks that the column content is all upper case, 
+						for all code points in the [[!UTF-8]] character set which have a defined case. 
+						Non-cased code points (e.g. numeric characters, punctuation and white space) are also permitted.
+						</p>
+						<p>
+						In Java's <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Pattern</a> class this could be expressed via the following Regular Expression:
+						"^[\\p{Lu}\\p{N}\\p{P}\\s]*$".
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-upper-case-expr"><dfn>UpperCaseExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"upperCase"</td> 
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h4>Lower Case Expression</h4>
+						<p>
+						<em>This is a new expression in CSV Schema Language 1.1</em>
+						</p>
+						<p>
+						A <dfn>Lower Case Expression</dfn> checks that the column content is all lower case, 
+						for all code points in the [[!UTF-8]] character set which have a defined case. 
+						Non-cased code points (e.g. numeric characters, punctuation and white space) are also permitted.
+						</p>
+						<p>
+						In Java's <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Pattern</a> class this could be expressed via the following Regular Expression:
+						"^[\\p{Lu}\\p{N}\\p{P}\\s]*$".
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-lower-case-expr"><dfn>LowerCaseExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"lowerCase"</td> 
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h4>Identical Expressions</h4>
+						<p>
+						<em>This is a new expression in CSV Schema Language 1.1</em>
+						</p>
+						<p>
+						An <dfn>Identical Expression</dfn> asserts that the value of the column MUST be identical for every row within a CSV file, 
+						without having to specify precisely what that value will be when writing the CSV Schema.
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-identical-expr"><dfn>IdenticalExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"identical"</td> 
+							</tr>
+						</table>
+							<section>
+								<h5>Identical Expressions example</h5>
+								<pre class="example" data-lt="Column Definition Syntax">
+	batch_date:	identical xDate
+	batch_code:	identical regex("^[A-Z]{3,5}B[0-9]{3}$")
+								</pre>
+								<p>
+								Consider a file that is expected to contain data relating to one particular batch of a process, 
+								and should also be the data relating to one particular day.  Over time we will receive many such files, 
+								so we don't want to amend the schema each day to say what the valid date for the file is, or what the appropriate batch_code is.
+								Instead we give a generic rule for the field content: it's an <a>xDate Expression</a> in the case of batch_date; 
+								or that the batch_code will comprise three to five uppercase letters, followed by an uppercase B, followed by three digits;
+								and for each row in the file every date must be identical and every batch_code must be identical.
+								</p>
+							</section>
+					</section>
 				</section>
 				<section>
 					<h3>External Single Expressions</h3>
@@ -1269,6 +1439,11 @@ simon,57,male
 						A <dfn>File Exists Expression</dfn> checks a filesystem to see if the specified file actually exists at the specified path.  
 						It takes an OPTIONAL expression in the form of a <a>String Provider</a> which allows you to supply a string (or reference to a string) 
 						with a full filepath to prepend to the contents of the current column (in the case that for example it only contains just the name of the file).
+						The default value for this string is an empty string.
+						</p>
+						<p>
+						See also the <a>Integrity Check Expression</a> which performs the inverse function of ensuring that all files in a given folder structure have been 
+						mentioned in a CSV file.
 						</p>
 						<table class="ebnf-table">
 							<tr>
@@ -1276,6 +1451,37 @@ simon,57,male
 								<td class="ebnf-left"><a title="ebnf-file-exists-expr"><dfn>FileExistsExpr</dfn></a></td>
 								<td class="ebnf-bind">::=</td>
 								<td class="ebnf-right">"fileExists" ("(" <a>StringProvider</a> ")")?</td> 
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h4>Integrity Check Expressions</h4>
+						<p>
+						<em>This is a new expression in CSV Schema Language 1.1</em>
+						</p>
+						<p>
+						An <dfn>Integrity Check Expression</dfn> checks a filesystem to see if there are any files present that are not specifically mentioned in the CSV file.
+						It takes three expressions as parameters.
+						The first are two OPTIONAL expressions in the form of <a title="String Provider">String Providers</a>. 
+						The first (as in the <a>File Exists Expression</a>) allows you to supply a string (or reference to a string) 
+						with a full filepath to prepend to the contents of the current column (in the case that for example it only contains just the name of the file).
+						The default value for this string is an empty string.
+						The second parameter allows a string provider to be given to point to an explicit subdirectory relative to the location of the base path.
+						By default this subdirectory is expected to be called "content".
+						The final expression MUST be supplied.  This indicates whether references to subfolders are explicitly included in the CSV file, 
+						if the CSV file has a row for each subfolder the exact string "includeFolder" should be given, 
+						if the subfolders do not have explicit references, the exact string "excludeFolder" should be given.
+						</p>
+						<p>
+						Default treatment of case sensitivity should follow the norms of the relevant file system, 
+						implementations may wish to include some means to over-ride this, but that is outside the scope of the EBNF.
+						</p>
+						<table class="ebnf-table">
+							<tr>
+								<td class="ebnf-num">[]</td>
+								<td class="ebnf-left"><a title="ebnf-integrity-check-expr"><dfn>IntegrityCheckExpr</dfn></a></td>
+								<td class="ebnf-bind">::=</td>
+								<td class="ebnf-right">"integrityCheck" "(" (<a>StringProvider</a> ",")? (<a>StringProvider</a> ",")? ("\"includeFolder\"" | "\"excludeFolder\"") ")"</td>
 							</tr>
 						</table>
 					</section>
@@ -1337,18 +1543,45 @@ simon,57,male
 					<h3>Input parameters used in Single Expressions and External Single Expressions</h3>
 					<p>
 					Many <a title="Single Expression">Single Expressions</a> and <a title="External Single Expression">External Single Expressions</a> take a <a>String Provider</a> 
-					as an input. A <dfn>String Provider</dfn> takes the form of either a <a>Column Reference</a> or a <a>String Literal</a>.  A <dfn>Column Reference</dfn> comprises 
-					a <code>dollar sign ($)</code>, i.e. the [[UTF-8]] character code <code>0x24</code>, followed by a <a>Column Identifier</a> or <a>Quoted Column Identifier</a>.
+					as an input. A <dfn>String Provider</dfn> takes the form of either a <a>Column Reference</a>, a <a>String Literal</a>, <a>Concatenation Expression</a>
+					or a <a>No Extension Expression</a>.
+					</p>
+					<p>
+					A <dfn>Column Reference</dfn> comprises a <code>dollar sign ($)</code>, i.e. the [[UTF-8]] character code <code>0x24</code>, 
+					followed by a <a>Column Identifier</a> or <a>Quoted Column Identifier</a>.
+					</p>
+					<p>
+					<em>The following are new expressions in CSV Schema Language 1.1</em>
+					</p>
+					<p>
+					The final two string providers are recursive, themselves taking one or more <a title="String Provider">String Providers</a> as arguments, 
+					and returning a new <a>String Provider</a>.
+					The <dfn>Concatenation Expression</dfn> takes two or more <a title="String Provider">String Providers</a>, 
+					returning a new string that is the concatenation of all those supplied. The <dfn>No Extension Argument Provider</dfn> removes anything that appears to be a Windows 
+					file extension from the end of a supplied <a>String Provider</a>, and returns a new string.  
+					A string that does not contain a <code>full stop (.)</code>, i.e. the [[UTF-8]] character codes <code>0x2D</code> will be returned unchanged.
 					</p>
 					<table class="ebnf-table">
 						<tr>
-							<td class="ebnf-num">[58]</td>
+							<td class="ebnf-num">[]</td>
 							<td class="ebnf-left"><a title="ebnf-string-provider"><dfn>StringProvider</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
-							<td class="ebnf-right"><a>ColumnRef</a> | <a>StringLiteral</a></td> 
+							<td class="ebnf-right"><a>ColumnRef</a> | <a>StringLiteral</a> | <a>ConcatExpr</a> | <a>NoExtExpr</a></td> 
 						</tr>
 						<tr>
-							<td class="ebnf-num">[35]</td>
+							<td class="ebnf-num">[]</td>
+							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>ColumnRef</dfn></a></td>
+							<td class="ebnf-bind">::=</td>
+							<td class="ebnf-right">"$" (<a>ColumnIdentifier</a> | <a>QuotedColumnIdentifier</a>)</td> 
+						</tr>
+						<tr>
+							<td class="ebnf-num">[]</td>
+							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>ConcatExpr</dfn></a></td>
+							<td class="ebnf-bind">::=</td>
+							<td class="ebnf-right">"concat" (<a>StringProvider</a> ("," <a>StringProvider</a>)+)</td> 
+						</tr>
+						<tr>
+							<td class="ebnf-num">[]</td>
 							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>ColumnRef</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
 							<td class="ebnf-right">"$" (<a>ColumnIdentifier</a> | <a>QuotedColumnIdentifier</a>)</td> 
@@ -1377,8 +1610,10 @@ simon,57,male
 				<p>
 				A <dfn>Conditional Expression</dfn> is used to apply different <a title="Column Validation Expression">Column Validation Expressions</a> to a column on the basis of the 
 				result of the evaluation of some other <a>Non Conditional Expression</a>.  
-				This is particularly useful when the data expected in one column depends on the value of another column.  There is only one form of Conditional Expression at present, 
-				the <a>If Expression</a>.
+				This is particularly useful when the data expected in one column depends on the value of another column.  
+				In the original CSV Schema Language 1.0 there was only one form of Conditional Expression, the <a>If Expression</a>.
+				CSV Schema Language 1.1 introduces the <a>Switch Expression</a> which allows a more compact and readable form for what would 
+				otherwise be written as nested <a title="If Expression">If Expressions</a>.
 				</p>
 				<table class="ebnf-table">
 					<tr>
@@ -1391,9 +1626,10 @@ simon,57,male
 				<section>
 					<h3>If Expressions</h3>
 					<p>
-					The <dfn>If Expression</dfn> is the only form of <a>Conditional Expression</a>. It takes three input parameters: the first two of these MUST be used, firstly a
-					<a>Combinatorial Expression</a> or <a>Non Conditional Expression</a>; when that evaluates to <code>true</code>, the second parameter, one or more <a>ColumnValidationExpr</a>s are applied; the third parameter is OPTIONAL, 
-					this is the <em>else</em> expression which is used when the first parameter evaluates to <code>false</code>.
+					The <dfn>If Expression</dfn> is the original form of <a>Conditional Expression</a> introduced in CSV Schema Language 1.0. 
+					It takes three input parameters: the first two of these MUST be used, first a <a>Combinatorial Expression</a> or <a>Non Conditional Expression</a>; 
+					when that evaluates to <code>true</code>, the second parameter, one or more <a title="Column Validation Expression">Column Validation Expressions</a>, are applied; the third parameter is OPTIONAL, 
+					these are the <em>else</em> <a title="Column Validation Expression">Column Validation Expressions</a> used when the first parameter evaluates to <code>false</code>.
 					</p>
 					<table class="ebnf-table">
 						<tr>
@@ -1404,10 +1640,46 @@ simon,57,male
 						</tr>
 					</table>
 				</section>
+				<section>
+					<h3>Switch Expressions</h3>
+					<p>
+					<em>This is a new expression in CSV Schema Language 1.1</em>
+					</p>
+					<p>
+					The <dfn>Switch Expression</dfn> generalises the <a>If Expression</a>. It comprises at least one <a>Switch Case Expression</a> followed by a final OPTIONAL parameter, 
+					one or more <a title="Column Validation Expression">Column Validation Expressions</a>, (this is the <em>else</em> expression) applied when all previous test expressions have evaluated to <code>false</code>.
+					</p>
+					<p>
+					Note that evaluation is halted after the first test expression to return <code>true</code>.
+					</p>
+					<section>
+						<h4>Switch Case Expression</h4>
+						<p>
+						The <dfn>Switch Case Expression</dfn> takes two parameters (equivalent to the first two non-optional parameters of the <a>If Expression</a>), 
+						first a <a>Combinatorial Expression</a> or <a>Non Conditional Expression</a>; 
+						when that evaluates to <code>true</code>, the second parameter, one or more <a title="Column Validation Expression">Column Validation Expressions</a>, are applied. 
+						At least one Switch Case Expression MUST be used within a <a>Switch Expression</a>, but there is no limit on the maximum number used.
+						</p>
+					</section>
+					<table class="ebnf-table">
+						<tr>
+							<td class="ebnf-num">[]</td>
+							<td class="ebnf-left"><a title="ebnf-switch-expr"><dfn>SwitchExpr</dfn></a></td>
+							<td class="ebnf-bind">::=</td>
+							<td class="ebnf-right">"switch(" <a>SwitchCaseExpr</a>+ ("," <a>ColumnValidationExpr</a>+)? ")"</td>
+						</tr>
+						<tr>
+							<td class="ebnf-num">[]</td>
+							<td class="ebnf-left"><a title="ebnf-switch-case-expr"><dfn>SwitchCaseExpr</dfn></a></td>
+							<td class="ebnf-bind">::=</td>
+							<td class="ebnf-right">"("( <a>CombinatorialExpr</a> | <a>NonConditionalExpr</a>) "," <a>ColumnValidationExpr</a>+ ")"</td>
+						</tr>
+					</table>
+				</section>
 			</section>
 			<section>
 				<h2>Column Expression examples</h2>
-				<pre class="example" title="Column Expression Syntax">
+				<pre class="example" data-lt="Column Expression Syntax">
 	piece: is("1") and (in($file_path) and in($resource_uri))          /*The column "piece" must have the specific value 1
 	                                                                   the value must also be part of the value of the columns "file_path" and "resource_uri"
 	                                                                   explicit And Expression is used between each specified Column Expression*/
@@ -1463,6 +1735,24 @@ simon,57,male
 						<td class="ebnf-num">[67]</td>
 						<td class="ebnf-left"><a title="ebnf-xsd-date-time-literal"><dfn>XsdDateTimeLiteral</dfn></a></td>
 						<td class="ebnf-bind">::=</td>
+						<td class="ebnf-right"><a>XsdDateWithoutTimezoneComponent</a> "T" <a>XsdOptionalTimeLiteral</a></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h3>XSD Date Time With Time Zone Literals</h3>
+				<p>
+				An <dfn>XSD Date Time With Time Zone Literal</dfn> MUST be a valid XML Schema dateTime data type (see [[!XMLSCHEMA-2]] and [[!ISO8601]]) of the basic form 
+				yyyy-mm-ddThh:mm:ss(.MMMMM) (year-month-day followed by time in hours, minutes, seconds and OPTIONAL fractions of a second).  There is one OPTIONAL part, a minus sign MAY 
+				be used for BC dates.  However, unlike <a>XSD Date Time Literal</a> there MUST be a suffix indicating the applicable timezone as an offset from GMT/UTC. 
+				GMT itself may be indicated by a suffix Z for Zulu, or as +00:00.  
+				It is represented in the EBNF by a regular expression defining precisely which characters are to be used.
+				</p>
+				<table class="ebnf-table">
+					<tr>
+						<td class="ebnf-num">[]</td>
+						<td class="ebnf-left"><a title="ebnf-xsd-date-time-with-time-zone-literal"><dfn>XsdDateTimeWithTimeZoneLiteral</dfn></a></td>
+						<td class="ebnf-bind">::=</td>
 						<td class="ebnf-right"><a>XsdDateWithoutTimezoneComponent</a> "T" <a>XsdTimeLiteral</a></td>
 					</tr>
 				</table>
@@ -1473,14 +1763,14 @@ simon,57,male
 				An <dfn>XSD Date Literal</dfn> MUST be a valid XML Schema date data type (see [[!XMLSCHEMA-2]] and [[!ISO8601]]) of the basic form 
 				yyyy-mm-dd (year-month-day).  There is one OPTIONAL part, a minus sign MAY be used for BC dates.  
 				It is represented in the EBNF by a regular expression defining precisely which characters are to be used. 
-				It is identical to the date part of <a>XSD Date Time Literal</a>.
+				It is also used as the date part of <a>XSD Date Time Literal</a>.
 				</p>
 				<table class="ebnf-table">
 					<tr>
 						<td class="ebnf-num">[68]</td>
 						<td class="ebnf-left"><a title="ebnf-xsd-date-literal"><dfn>XsdDateLiteral</dfn></a></td>
 						<td class="ebnf-bind">::=</td>
-						<td class="ebnf-right"><a>XsdDateWithoutTimezoneComponent</a> <a>XsdTimezoneComponent</a></td>
+						<td class="ebnf-right"><a>XsdDateWithoutTimezoneComponent</a> <a>XsdOptionalTimezoneComponent</a></td>
 					</tr>
 				</table>
 			</section>
@@ -1491,14 +1781,14 @@ simon,57,male
 				hh:mm:ss(.MMMMM) (time in hours, minutes, seconds and OPTIONAL fractions of a second).  There is one OPTIONAL part, 
 				there MAY be a suffix indicating the applicable timezone as an offset from GMT/UTC.  GMT itself may be indicated by a suffix Z for Zulu.   
 				It is represented in the EBNF by a regular expression defining precisely which characters are to be used. 
-				It is identical to the time part of <a>XSD Date Time Literal</a>.
+				It is also used as the time part of <a>XSD Date Time Literal</a>.
 				</p>
 				<table class="ebnf-table">
 					<tr>
 						<td class="ebnf-num">[69]</td>
 						<td class="ebnf-left"><a title="ebnf-xsd-time-literal"><dfn>XsdTimeLiteral</dfn></a></td>
 						<td class="ebnf-bind">::=</td>
-						<td class="ebnf-right"><a>XsdTimeWithoutTimezoneComponent</a> <a>XsdTimezoneComponent</a></td>
+						<td class="ebnf-right"><a>XsdTimeWithoutTimezoneComponent</a> <a>XsdOptionalTimezoneComponent</a></td>
 					</tr>
 				</table>
 			</section>
@@ -1522,9 +1812,17 @@ simon,57,male
 					</tr>
 					<tr>
 						<td class="ebnf-num">[72]</td>
-						<td class="ebnf-left"><a title="ebnf-xsd-timezone-component"><dfn>XsdTimezoneComponent</dfn></a></td>
+						<td class="ebnf-left"><a title="ebnf-xsd-timezone-component"><dfn>XsdOptionalTimezoneComponent</dfn></a></td>
 						<td class="ebnf-bind">::=</td>
 						<td class="ebnf-right">((\+|-)(0[1-9]|1[0-9]|2[0-4]):(0[0-9]|[1-5][0-9])|Z)?</td>
+<!-- may be able to simplify to <a title="ebnf-xsd-timezone-component">? -->
+						<td class="ebnf-note">/* <a>xgc:regular-expression</a> */</td>
+					</tr>
+					<tr>
+						<td class="ebnf-num">[]</td>
+						<td class="ebnf-left"><a title="ebnf-xsd-timezone-component"><dfn>XsdTimezoneComponent</dfn></a></td>
+						<td class="ebnf-bind">::=</td>
+						<td class="ebnf-right">((\+|-)(0[1-9]|1[0-9]|2[0-4]):(0[0-9]|[1-5][0-9])|Z)</td>
 						<td class="ebnf-note">/* <a>xgc:regular-expression</a> */</td>
 					</tr>
 				</table>
@@ -1629,7 +1927,7 @@ simon,57,male
 			A <dfn>Wildcard Literal</dfn> is a single <code>asterisk (*)</code>, i.e. the [[UTF-8]] character code <code>0x2A</code>.
 			</p>
 			<table class="ebnf-table">
-				<tr>	
+				<tr>
 					<td class="ebnf-num">[79]</td>
 					<td class="ebnf-left"><a title="ebnf-wildcard-literal"><dfn>WildcardLiteral</dfn></a></td>
 					<td class="ebnf-bind">::=</td>
@@ -1645,7 +1943,7 @@ simon,57,male
 			and <code>0x2E</code>.
 			</p>
 			<table class="ebnf-table">
-				<tr>	
+				<tr>
 					<td class="ebnf-num">[80]</td>
 					<td class="ebnf-left"><a title="ebnf-ident"><dfn>Ident</dfn></a></td>
 					<td class="ebnf-bind">::=</td>
@@ -1694,7 +1992,7 @@ simon,57,male
 	</section>
 	<section class="appendix">
 		<h2>The text/csv-schema Media Type</h2>
-		<p>This Appendix specifies the media type for CSV Schema Version 1.0. CSV Schema is a language for describing and validating CSV files, as specified in the main body of this document. This media type has being submitted to the IESG (Internet Engineering Steering Group) for review, approval, and registration with IANA (Internet Assigned Numbers Authority.)</p>
+		<p>This Appendix specifies the media type for CSV Schema Version 1.0 and CSV Schema Version 1.1. CSV Schema is a language for describing and validating CSV files, as specified in the main body of this document. This media type has been submitted to the IESG (Internet Engineering Steering Group) for review, approval, and registration with IANA (Internet Assigned Numbers Authority.)</p>
 		<p>The <code>text/csv-schema</code> media type, is intended to be used for transmitting schemas written in the CSV Schema language.</p>
 		<section>
 			<h3>File Extensions</h3>
@@ -1737,7 +2035,7 @@ simon,57,male
 					<td class="ebnf-num"></td>
 					<td class="ebnf-left"><a><dfn title="ebnf-version-decl">VersionDecl</dfn></a></td>
 					<td class="ebnf-bind">::=</td>
-					<td class="ebnf-right">"version 1.0"</td>
+					<td class="ebnf-right">("version 1.0" | "version 1.1")</td>
 					<td class="ebnf-note"></td>
 				</tr>
 				<tr>
