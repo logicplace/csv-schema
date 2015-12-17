@@ -328,6 +328,7 @@ simon,57,male
 		In addition the <a>Range Expression</a> has been extended to allow the creation of ranges that have only an upper or lower bound using similar syntax to that employed by
 		the <a>Length Expression</a>. This also required the addition of <a>Numeric Or Any</a> type (to allow ranges to have negative values as bounds), or the <a>Wildcard Literal</a>. 
 		In the <a>Length Expression</a> we used only <a>Positive Integer Or Any</a> since a negative value has no sensible meaning for the length of a field.
+		There is also one new <a>Global Directive</a>, the <a>Permit Empty Directive</a>.  This allows a file with no data rows to be treated as valid.
 		</p>
 	</section>
     <section>
@@ -454,7 +455,11 @@ simon,57,male
 				</section>
 				<section>
 					<h4>Quoted Directive</h4>
-					<p>The <dfn>Quoted Directive</dfn> allows you to specify whether or not all columns are <em>quoted</em>. That is to say that their values are encased in <em>quotation mark</em> characters, i.e. [[UTF-8]] character code <code>0x22</code>.</p>
+					<p>The <dfn>Quoted Directive</dfn> allows you to specify whether or not all columns are <em>quoted</em>. 
+					That is to say that their values are encased in <em>quotation mark</em> characters, i.e. [[UTF-8]] character code <code>0x22</code>.
+					In practice most CSV libraries are able to detect and handle the presence or absence of quotes and handle it appropriately, 
+					but implementations of this schema language should be able to decide how to handle this situation.
+					</p>
 					<table class="ebnf-table">
 						<tr>
 							<td class="ebnf-num">[9]</td>
@@ -485,10 +490,13 @@ simon,57,male
 				<section>
 					<h4>Permit Empty Directive</h4>
 					<p>
+					<em>This is a new expression in CSV Schema Language 1.1</em>
+					</p>
+					<p>
 					The <dfn>Permit Empty Directive</dfn> allows you to specify that the CSV file can be empty: i.e. there is no row data.
 					The Permit Empty Directive is OPTIONAL: when not present an empty file will cause a validation error.
-					The Permit Empty Directive can be used in conjunction with the <a>No Header Directive</a> thereby permitting a completely empty CSV file. If the <a>No Header Directive</a> is not
-					present then a minimum of one row containing column names must be provided.  This directive is NOT available in Schema Version 1.0.
+					The Permit Empty Directive can be used in conjunction with the <a>No Header Directive</a> thereby permitting a completely empty CSV file. 
+					If the <a>No Header Directive</a> is not present then a minimum of one row containing column names must be provided.
 					</p>
 					<table class="ebnf-table">
 						<tr>
@@ -915,8 +923,8 @@ simon,57,male
 				<section>
 					<h3>Single Expressions</h3>
 					<p>
-					<dfn title="Single Expression">Single Expressions</dfn> are the basic building blocks of <a>Column Rules</a>.  There are currently 21 available for use 
-					(and some have their own subexpressions used as parameters), although the first is really used as an OPTIONAL modifier to the rest. 
+					<dfn title="Single Expression">Single Expressions</dfn> are the basic building blocks of <a>Column Rules</a>.  There are currently 27 available for use 
+					as of CSV Schema Language 1.1 (and some have their own subexpressions used as parameters), although the first is really used as an OPTIONAL modifier to the rest. 
 					In many cases values can be provided to the test either as an explicit string (or number where appropriate), or by reference to the value held by another column.
 					</p>
 					<table class="ebnf-table">
@@ -924,9 +932,11 @@ simon,57,male
 							<td class="ebnf-num">[34]</td>
 							<td class="ebnf-left"><a title="ebnf-single-expr"><dfn>SingleExpr</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
-							<td class="ebnf-right"><a>ExplicitContextExpr</a>? (<a>IsExpr</a> | <a>NotExpr</a> | <a>InExpr</a> | <a>StartsWithExpr</a> | <a>EndsWithExpr</a> | 
-							<a>RegExpExpr</a> | <a>RangeExpr</a> | <a>LengthExpr</a> | <a>EmptyExpr</a> | <a>NotEmptyExpr</a> | <a>UniqueExpr</a> | <a>UriExpr</a> | <a>XsdDateTimeExpr</a> | 
-							<a>XsdDateExpr</a> | <a>XsdTimeExpr</a> | <a>UkDateExpr</a> | <a>DateExpr</a> | <a>PartialUkDateExpr</a> | <a>PartialDateExpr</a> <a>Uuid4Expr</a> | <a>PositiveIntegerExpr</a>)</td> 
+							<td class="ebnf-right"><a>ExplicitContextExpr</a>? (<a>IsExpr</a> | <a>AnyExpr</a> | <a>NotExpr</a> | <a>InExpr</a> | <a>StartsWithExpr</a> | 
+							<a>EndsWithExpr</a> | <a>RegExpExpr</a> | <a>RangeExpr</a> | <a>LengthExpr</a> | <a>EmptyExpr</a> | <a>NotEmptyExpr</a> | <a>UniqueExpr</a> | 
+							<a>UriExpr</a> | <a>XsdDateTimeExpr</a> | XsdDateTimeWithTimeZoneExpr | <a>XsdDateExpr</a> | <a>XsdTimeExpr</a> | <a>UkDateExpr</a> | <a>DateExpr</a> | 
+							<a>PartialUkDateExpr</a> | <a>PartialDateExpr</a> <a>Uuid4Expr</a> | <a>PositiveIntegerExpr</a> | <a>UpperCaseExpr</a> | <a>LowerCaseExpr</a> | 
+							<a>IdenticalExpr</a>)</td> 
 						</tr>
 					</table>	
 					<section>
@@ -1430,7 +1440,7 @@ simon,57,male
 							<td class="ebnf-num">[59]</td>
 							<td class="ebnf-left"><a title="ebnf-external-single-expr"><dfn>ExternalSingleExpr</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
-							<td class="ebnf-right"><a>ExplicitContextExpr</a>? (<a>FileExistsExpr</a> | <a>ChecksumExpr</a> | <a>FileCountExpr</a>)</td>
+							<td class="ebnf-right"><a>ExplicitContextExpr</a>? (<a>FileExistsExpr</a> | <a>IntegrityCheck</a> | <a>ChecksumExpr</a> | <a>FileCountExpr</a>)</td>
 						</tr>
 					</table>
 					<section>
