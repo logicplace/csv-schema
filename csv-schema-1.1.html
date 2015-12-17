@@ -1578,13 +1578,13 @@ simon,57,male
 							<td class="ebnf-num">[]</td>
 							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>ConcatExpr</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
-							<td class="ebnf-right">"concat" (<a>StringProvider</a> ("," <a>StringProvider</a>)+)</td> 
+							<td class="ebnf-right">"concat(" <a>StringProvider</a> ("," <a>StringProvider</a>)+ ")"</td> 
 						</tr>
 						<tr>
 							<td class="ebnf-num">[]</td>
-							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>ColumnRef</dfn></a></td>
+							<td class="ebnf-left"><a title="ebnf-column-ref"><dfn>NoExt</dfn></a></td>
 							<td class="ebnf-bind">::=</td>
-							<td class="ebnf-right">"$" (<a>ColumnIdentifier</a> | <a>QuotedColumnIdentifier</a>)</td> 
+							<td class="ebnf-right">"noExt(" <a>StringProvider</a> ")"</td> 
 						</tr>
 					</table>
 	 			</section>
