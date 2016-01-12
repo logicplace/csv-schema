@@ -662,8 +662,8 @@ simon,57,male
 					</p>
 					<p>
 					The <a>Quoted Column Identifier</a> allows a greater range of characters to be used in naming the column than can be supported by an <a>Ident</a>, 
-					but the identifier must be wrapped in <code>quotation marks (")</code>, 
-					i.e. the [[UTF-8]] character code <code>0x22</code>.
+					but the identifier MUST be wrapped in <code>quotation marks (")</code>, 
+					i.e. the [[UTF-8]] character code <code>0x22</code> (this is implicit in its definition as a <a>String Literal</a>).
 					</p>
 					<p>
 					Identifiers MUST be unique within a single Schema.
@@ -682,6 +682,13 @@ simon,57,male
 							<td class="ebnf-right"><a>StringLiteral</a></td> 
 						</tr>
 					</table>
+					<section>
+						<h5>Usage</h5>
+						<pre class="example" data-lt="Column Identifier and Quoted Column Identifier Syntax">
+	a_column_identifier
+	"a quoted column identifier"
+						</pre>
+					</section>
 				</section>
 				<section>
 					<h4>Column Rules</h4>
@@ -959,7 +966,14 @@ simon,57,male
 							<td class="ebnf-bind">::=</td>
 							<td class="ebnf-right">"$" (<a>ColumnIdentifier</a> | <a>QuotedColumnIdentifier</a>)</td> 
 						</tr>
-						</table>	
+						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Explicit Context Expression Syntax">
+	a_column: is("some string") and $another_column/startsWith("some string")
+	another_column: 
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Is Expressions</h4>
@@ -1698,7 +1712,9 @@ simon,57,male
 				A greater range of example and other schemas actually used by The National Archives 
 				<a href="https://github.com/digital-preservation/csv-schema/tree/master/example-schemas">can be found on GitHub</a>.  
 				Most of these are extensively commented in order to explain usage.  There is a also a set of example files to be downloaded which allow 
-				<a title="File Exists Expression">File Exists Expressions</a> and <a title="Checksum Expression">Checksum Expressions and path substitutions to be more easily understood.
+				<a title="File Exists Expression">File Exists Expressions</a> and <a title="Checksum Expression">Checksum Expressions</a> 
+				and path substitutions to be more easily understood, these are designed to be used with the generic_digitised_surrogate_tech_acq_metadata_v1.1.csvs and 
+				generic_digitised_surrogate_tech_acq_metadata_v1.0.csvs schemas, which also helps demonstrate the additional checking that CSV Schema Language 1.1 enables.
 				</p>
 				<pre class="example" data-lt="Column Expression Syntax">
 	piece: is("1") and (in($file_path) and in($resource_uri))          /*The column "piece" must have the specific value 1
@@ -1727,8 +1743,11 @@ simon,57,male
 	                                                                   /*If "image_split" field is string: yes (precisely)
 	                                                                   then timestamp for image split, compliant with XSD DateTime data type
 	                                                                   and in range 4 December 2013 - 4 March 2014 (from the midnight starting 4 December, 
-	                                                                   to last second of 4 March), and in the UTC (Greenwich Meantime) timezone, 
+	                                                                   to last second of 4 March), in the UTC (Greenwich Meantime) timezone, 
 																	   else it must be blank (ie "image_split" is no).
+																	   As xDateTime, rather than xDateTimeTz, is specified, 
+																	   the use of the timezone component within the supplied date time is optional, eg both:
+																	   2013-12-05T12:34:00+00:00 and 2013-12-05T12:34:00 would be acceptable in the metadata/*
 				</pre>
 			</section>
     	</section>
