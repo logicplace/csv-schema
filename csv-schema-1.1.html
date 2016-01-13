@@ -988,6 +988,13 @@ simon,57,male
 								<td class="ebnf-right">"is(" <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Is Expression Syntax">
+	a_column: is("some string")
+	another_column: is($a_column)
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Any Expressions</h4>
@@ -1007,6 +1014,14 @@ simon,57,male
 								<td class="ebnf-right">"any(" <a>StringProvider</a> ("," <a>StringProvider</a>)* ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Any Expression Syntax">
+	a_column: is("some string")
+	another_column: any("some other string",$a_column,"another string")
+							</pre>
+						</section>
+					</section>
 					</section>
 					<section>
 						<h4>Not Expressions</h4>
