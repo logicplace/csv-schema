@@ -1562,7 +1562,7 @@ simon,57,male
 						</p>
 						<p>
 						In Java's <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Pattern</a> class this could be expressed via the following Regular Expression:
-						"^[\\p{Lu}\\p{N}\\p{P}\\s]*$".
+						"^[\\p{Ll}\\p{N}\\p{P}\\s]*$".
 						</p>
 						<table class="ebnf-table">
 							<tr>
@@ -1689,10 +1689,13 @@ simon,57,male
 						</table>
 						<section>
 							<h5>Usage</h5>
-							<pre class="example" data-lt="Lower Case Expression Syntax">
-	a_column: integrityCheck("includeFolder")                     //the validator should check the filesystem location indicated by the contents of a_column for the existence of such a file
-	another_column: integrityCheck("file:///C:/","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the existence check is made
-	third_column: integrityCheck("","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the existence check is made
+							<pre class="example" data-lt="Integrity Check Expression Syntax">
+	a_column: integrityCheck("includeFolder")                     /*the validator should check all file system folders for files that are not referenced in the CSV file
+	                                                                the "includeFolder" parameter indicates that there are explicit references to all file folders in the CSV file
+																    as the second parameter has not been supplied it defaults to the value "content" meanig that all sub folders must
+																	sit within a folder with that name*/
+	another_column: integrityCheck("file:///C:/","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the integrity check is made
+	third_column: integrityCheck("","excludeFolder")              //here as an empty string is included, we indicate that there is no content folder
 							</pre>
 						</section>
 					</section>
@@ -1719,7 +1722,7 @@ simon,57,male
 					</section>
 						<section>
 							<h5>Usage</h5>
-							<pre class="example" data-lt="Lower Case Expression Syntax">
+							<pre class="example" data-lt="Checksum Expression Syntax">
 	file_path: uri                                                           //a full filepath for a file
 	file_name:                                                               //a filename only for a file
 	a_column: checksum(file($file_path),"SHA-256")                           /*a_column contains the SHA-256 checksum value supplied for the file, the validator
@@ -1742,6 +1745,13 @@ simon,57,male
 								<td class="ebnf-right">"fileCount(" <a>FileExpr</a> ")"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="File Count Expression Syntax">
+	file_path: uri                                      //a full filepath for a folder
+	another_column: integer fileCount(file($file_path)) //another_column contains an integer value, this is checked against the number of files in the file system folder at file_path
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>File related sub-expressions</h4>
@@ -1759,6 +1769,20 @@ simon,57,male
 								<td class="ebnf-right">"file(" (<a>StringProvider</a> ",")? <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<p>The File Expression is always used as an input parameter to one of the other file expressions, several examples are given above.  Here are explained the
+							two parameters that this expression itself takes.
+							</p>
+							<pre class="example" data-lt="File Expression Syntax">
+	file("file:///a/string/for/a/URI/representing/the/location/of/a/file")           /*in the simplest case a single parameter is supplied that's a string representing the full URI of a
+	                                                                                   file. Since it's a URI, characters such as space must be escaped (a space becomes %20)
+																			           you can either use a string literal as here, or pass a reference to a column using $column_name*/
+	file("file:///a/string/to/prepend/to/a/filename/to/make/a/full/path","filename") /*Here you provide a string (or reference to a string) that is the base path to prepend to "filename"
+	                                                                                   to get the full path to your file*/
+							</pre>
+						</section>
+					</section>
 					</section>
 				</section>
 				<section>
@@ -1779,7 +1803,8 @@ simon,57,male
 					The final two string providers are recursive, themselves taking one or more <a title="String Provider">String Providers</a> as arguments, 
 					and returning a new <a>String Provider</a>.
 					The <dfn>Concatenation Expression</dfn> takes two or more <a title="String Provider">String Providers</a>, 
-					returning a new string that is the concatenation of all those supplied. The <dfn>No Extension Argument Provider</dfn> removes anything that appears to be a Windows 
+					returning a new string that is the concatenation of all those supplied.  You MUST provide at least two parameters. 
+					The <dfn>No Extension Argument Provider</dfn> removes anything that appears to be a Windows 
 					file extension from the end of a supplied <a>String Provider</a>, and returns a new string.  
 					A string that does not contain a <code>full stop (.)</code>, i.e. the [[UTF-8]] character codes <code>0x2D</code> will be returned unchanged.
 					</p>
@@ -1802,6 +1827,18 @@ simon,57,male
 							<td class="ebnf-bind">::=</td>
 							<td class="ebnf-right">"noExt(" <a>StringProvider</a> ")"</td> 
 						</tr>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="File Count Expression Syntax">
+	a_column: is("no file")                                      //a full filepath for a folder
+	another_column: any("file:///","http://") //another_column contains an integer value, this is checked against the number of files in the file system folder at file_path
+	third_column: any("C:","example.com")
+	fourth_column: ends(".html")
+	fifth_column: is($a_column) or is(concat($another_column,$third_column,"/",noExt(fourth_column),".pdf")
+	/*in this rather artificial example, fifth_column must be either "no file" (the value of a_column) or a PDF file with the same basic name as the HTML file named in fourth_column,
+	  located at either file:///C:/ or http://example.com/ (in fact as written you could have file:///example.com/ or http://C:/ as well)*/
+							</pre>
+						</section>
 					</table>
 	 			</section>
 				<section>
