@@ -970,8 +970,8 @@ simon,57,male
 						<section>
 							<h5>Usage</h5>
 							<pre class="example" data-lt="Explicit Context Expression Syntax">
-	a_column: is("some string") and $another_column/startsWith("some string")
-	another_column: 
+	a_column: is("some string") and $another_column/startsWith("some string") //here two tests are combined on a single line, the second test here looks to the second column 
+	another_column:                                                           //to check it's value starts with "some string"
 							</pre>
 						</section>
 					</section>
@@ -991,8 +991,8 @@ simon,57,male
 						<section>
 							<h5>Usage</h5>
 							<pre class="example" data-lt="Is Expression Syntax">
-	a_column: is("some string")
-	another_column: is($a_column)
+	a_column: is("some string")    //the contents of a_column must be the string "some string"
+	another_column: is($a_column)  //the contents of another_column must be the value held in a_column, treated as a string
 							</pre>
 						</section>
 					</section>
@@ -1018,7 +1018,7 @@ simon,57,male
 							<h5>Usage</h5>
 							<pre class="example" data-lt="Any Expression Syntax">
 	a_column: is("some string")
-	another_column: any("some other string",$a_column,"another string")
+	another_column: any("some other string",$a_column,"another string") //any of the string values given here are valid, including referencing the string held in a_column
 							</pre>
 						</section>
 					</section>
@@ -1036,6 +1036,14 @@ simon,57,male
 								<td class="ebnf-right">"not(" <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Not Expression Syntax">
+	a_column: not("some string")     //the value of a_column must not be the string "some string"
+	another_column: not($a_column)   //the value of another_column must not be the value held in a_column
+							</pre>
+						</section>
+					</section>
 					</section>
 					<section>
 						<h4>In Expressions</h4>
@@ -1051,6 +1059,14 @@ simon,57,male
 								<td class="ebnf-right">"in(" <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="In Expression Syntax">
+	a_column: in("some string")   //the value of a_column must be a substring of "some string" eg "some" or "string" or "me st" etc
+	another_column: in($a_column) //the value of another_column must be a substring of the contents of a_column
+							</pre>
+						</section>
+					</section>
 					</section>
 					<section>
 						<h4>Starts With Expressions</h4>
@@ -1065,6 +1081,14 @@ simon,57,male
 								<td class="ebnf-right">"starts(" <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Starts With Expression Syntax">
+	a_column: startsWith("some string")   //the value of a_column must start with the string "some string" eg "some strings" or "some string is here that's really long"
+	another_column: startsWith($a_column) //the value of another_column must start with the contents of a_column
+							</pre>
+						</section>
+					</section>
 					</section>
 					<section>
 						<h4>Ends With Expressions</h4>
@@ -1079,6 +1103,14 @@ simon,57,male
 								<td class="ebnf-right">"ends(" <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Ends With Expression Syntax">
+	a_column: endsWith("some string")   //the value of a_column must end with the string "some string" eg "here is some string" or "this really long string ends with some string"
+	another_column: endsWith($a_column) //the value of another_column must end with the contents of a_column
+							</pre>
+						</section>
+					</section>
 					</section>
 					<section>
 						<h4>Regular Expression Expressions</h4>
@@ -1098,6 +1130,11 @@ simon,57,male
 								<td class="ebnf-right">"regex(" <a>StringLiteral</a> ")"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Regular Expression Expression Syntax">
+	a_column: regex("[bcm]at")   //the value of a_column must match the regular expression [bcm]at ie a string containing "bat", "cat" or "mat"
+	another_column: regex("[0-5]") //the value of another_column match the regular expression [0-5] ie a string containing only the digits only 0-5.
 					</section>
 					<section>
 						<h4>Range Expressions</h4>
@@ -1174,6 +1211,12 @@ simon,57,male
 								<td class="ebnf-right">"empty"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Empty Expression Syntax">
+	a_column: empty //there must be no value in a_column
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Not Empty Expression</h4>
@@ -1188,6 +1231,12 @@ simon,57,male
 								<td class="ebnf-right">"notEmpty"</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Not Empty Expression Syntax">
+	a_column: notEmpty   //there must be some value in a_column, but it can be absolutely anything
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Unique Expressions</h4>
@@ -1206,10 +1255,17 @@ simon,57,male
 							</tr>
 						</table>	
 					</section>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Unique Expression Syntax">
+	a_column: unique                                  //a_column must hold a unique value in each row of the CSV file
+	another_column: unique($a_column,$another_column) //the combination of values in the two columns must be unique looking across each row of the CSV file
+							</pre>
+						</section>
 					<section>
 						<h4>URI Expressions</h4>
 					<p>
-					A <dfn>URI Expression</dfn> checks that the value in the column is a valid URI as defined in [[!RFC3986]].
+					A <dfn>URI Expression</dfn> means that the value in the column MSUT be a valid URI as defined in [[!RFC3986]].
 					</p>
 						<table class="ebnf-table">
 							<tr>
@@ -1218,7 +1274,13 @@ simon,57,male
 								<td class="ebnf-bind">::=</td>
 								<td class="ebnf-right">"uri"</td> 
 							</tr>
-						</table>	
+						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="URI Expression Syntax">
+	a_column: uri   //the value of a_column must be a valid URI
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>XSD Date Time Expressions</h4>
@@ -1238,6 +1300,14 @@ simon,57,male
 								<td class="ebnf-right">"xDateTime" ("(" <a>XsdDateTimeLiteral</a> "," <a>XsdDateTimeLiteral</a> ")")?</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Date Time Expression Syntax">
+	a_column: xDateTime                                                 //the value of a_column must be a valid xDateTime
+	another_column: xDateTime(2014-10-04T00:00:01Z,2015-12-03T23:59:59) //the value of another_column must be a valid xDateTime and between the two xDateTimes shown (inclusive)
+	                                                                    //as shown, the xDateTime values may, or may not, have a component indicating a specific timezone, here Z (Zulu) for UTC (Greenwich Mean Time)
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>XSD Date Time With Time Zone Expressions</h4>
@@ -1256,6 +1326,14 @@ simon,57,male
 								<td class="ebnf-right">"xDateTimeTz" ("(" <a>XsdDateTimeWithTimeZoneLiteral</a> "," <a>XsdDateTimeWithTimeZoneLiteral</a> ")")?</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Date Time With Time Zone Expression Syntax">
+	a_column: xDateTime                                                            //the value of a_column must be a valid xDateTime
+	another_column: xDateTime(2014-10-04T00:00:01+02:00,2015-12-03T23:59:59+02:00) //the value of another_column must be a valid xDateTime and between the two xDateTimes shown (inclusive)
+	                                                                               //now the time zone component (+02:00) must be included
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>XSD Date Expressions</h4>
@@ -1272,6 +1350,13 @@ simon,57,male
 								<td class="ebnf-right">"xDate" ("(" <a>XsdDateLiteral</a> "," <a>XsdDateLiteral</a> ")")?</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Date Zone Expression Syntax">
+	a_column: xDate                                  //the value of a_column must be a valid xDate
+	another_column: xDateTime(2014-10-04,2015-12-03) //the value of another_column must be a valid xDate and between the two xDates shown (inclusive)
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>XSD Time Expressions</h4>
@@ -1288,6 +1373,14 @@ simon,57,male
 								<td class="ebnf-right">"xTime" ("(" <a>XsdTimeLiteral</a> "," <a>XsdTimeLiteral</a> ")")?</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Time Expression Syntax">
+	a_column: xTime                                                 //the value of a_column must be a valid xTime
+	another_column: xTime(00:00:01+02:00,2015-12-03T23:59:59+02:00) //the value of another_column must be a valid xTime and between the two xTimes shown (inclusive)
+	                                                                //the time zone component (+02:00) is optional
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>UK Date Expressions</h4>
@@ -1304,13 +1397,20 @@ simon,57,male
 								<td class="ebnf-right">"ukDate" ("(" <a>UkDateLiteral</a> "," <a>UkDateLiteral</a> ")")?</td> 
 							</tr>
 						</table>	
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="UK Date Expression Syntax">
+	a_column: ukDate                              //the value of a_column must be a valid ukDate
+	another_column: ukDate(04/10/2014,03/12/2015) //the value of another_column must be a valid ukDate and between the two ukDates shown (inclusive)
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Date Expression</h4>
 						<p>
 						A <dfn>Date Expression</dfn> allows a full date to be constructed from several columns, or strings. The expression takes five arguments:
 						you MUST supply three strings or <a title="Column Reference">Column References</a> representing Year, Month and Day 
-						(although supplied as strings, these values must in fact be integers); 
+						(although supplied as strings, these values must in fact be integers); <!--is this true, can we use month spelled out in full: January, February etc?-->
 						and there are two OPTIONAL parameters to ensure the date falls in a range specified by <em>from</em> <a>XSD Date Expression</a> and <em>to</em> <a>XSD Date Expression</a>.
 						</p>
 						<table class="ebnf-table">
@@ -1321,6 +1421,15 @@ simon,57,male
 								<td class="ebnf-right">"date(" <a>StringProvider</a> "," <a>StringProvider</a> "," <a>StringProvider</a> ("," <a>XsdDateLiteral</a> "," <a>XsdDateLiteral</a>)? ")"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Date Time With Time Zone Expression Syntax">
+	year_column: date($year_column,$month_column,$day_column)                      /*the full date to be checked is made up from the values from the three columns indicated, 
+	                                                                                 as shown, the columns can appear in CSV file in any order, but must appear in the date expression in the order year, month, day*/
+	day_column: date($year_column,$month_column,$day_column,2014-10-04,2015-12-03) //this second example shows that you can also supply from and to dates as xDates, both dates are inclusive
+	month_column:
+							</pre><!--can month column be a textual representation>-->
+						</section>
 					</section>
 					<section>
 						<h4>Partial UK Date Expression</h4>
@@ -1339,6 +1448,12 @@ simon,57,male
 								<td class="ebnf-right">"partUkDate"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="UK Date Expression Syntax">
+	a_column: partUkDate //the value of a_column must be a valid ukDate, but may also include characters ? and * to represent illegible or missing characters
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Partial Date Expression</h4>
@@ -1355,6 +1470,14 @@ simon,57,male
 								<td class="ebnf-right">"partDate(" <a>StringProvider</a> "," <a>StringProvider</a> "," <a>StringProvider</a> ")"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="XSD Date Time With Time Zone Expression Syntax">
+	year_column: date($year_column,$month_column,$day_column)                      //the full date to be checked is made up from the values from the three columns indicated, 
+	day_column:                                                                    //as shown, the columns can appear in CSV file in any order, but must appear in the date expression in the order year, month, day
+	month_column:                                                                  //the date may also include characters ? and * to represent illegible or missing characters
+							</pre><!--can month column be a textual representation>-->
+						</section>
 					</section>
 					<section>
 						<h4>UUID4 Expression</h4>
@@ -1371,6 +1494,12 @@ simon,57,male
 								<td class="ebnf-right">"uuid4"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="UUID4 Expression Syntax">
+	a_column: uuid //the value of a_column must be a valid version 4 UUID
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Positive Integer Expression</h4>
@@ -1450,7 +1579,7 @@ simon,57,male
 							</tr>
 						</table>
 							<section>
-								<h5>Identical Expressions example</h5>
+								<h5>Usage</h5>
 								<pre class="example" data-lt="Column Definition Syntax">
 	batch_date:	identical xDate
 	batch_code:	identical regex("^[A-Z]{3,5}B[0-9]{3}$")
