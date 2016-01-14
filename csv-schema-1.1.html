@@ -1514,6 +1514,12 @@ simon,57,male
 								<td class="ebnf-right">"positiveInteger"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Positive Integer Expression Syntax">
+	a_column: positiveInteger //the value of a_column must be a positive integer (including zero)
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Upper Case Expression</h4>
@@ -1537,6 +1543,12 @@ simon,57,male
 								<td class="ebnf-right">"upperCase"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Upper Case Expression Syntax">
+	a_column: upperCase //the contents of a_column must be all be upper case characters (Unicode aware), or uncased
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Lower Case Expression</h4>
@@ -1560,6 +1572,12 @@ simon,57,male
 								<td class="ebnf-right">"lowerCase"</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Lower Case Expression Syntax">
+	a_column: lowerCase //the contents of a_column must be all be lower case characters (Unicode aware), or uncased
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Identical Expressions</h4>
@@ -1580,7 +1598,7 @@ simon,57,male
 						</table>
 							<section>
 								<h5>Usage</h5>
-								<pre class="example" data-lt="Column Definition Syntax">
+								<pre class="example" data-lt="Identical Expression Syntax">
 	batch_date:	identical xDate
 	batch_code:	identical regex("^[A-Z]{3,5}B[0-9]{3}$")
 								</pre>
@@ -1631,6 +1649,13 @@ simon,57,male
 								<td class="ebnf-right">"fileExists" ("(" <a>StringProvider</a> ")")?</td> 
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Lower Case Expression Syntax">
+	a_column: fileExists                      //the validator should check the filesystem location indicated by the contents of a_column for the existence of such a file
+	another_column: fileExists("file:///C:/") //here the string "file:///C:/" is prepended to the contents of another_column before the existence check is made
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Integrity Check Expressions</h4>
@@ -1662,6 +1687,14 @@ simon,57,male
 								<td class="ebnf-right">"integrityCheck" "(" (<a>StringProvider</a> ",")? (<a>StringProvider</a> ",")? ("\"includeFolder\"" | "\"excludeFolder\"") ")"</td>
 							</tr>
 						</table>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Lower Case Expression Syntax">
+	a_column: integrityCheck("includeFolder")                     //the validator should check the filesystem location indicated by the contents of a_column for the existence of such a file
+	another_column: integrityCheck("file:///C:/","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the existence check is made
+	third_column: integrityCheck("","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the existence check is made
+							</pre>
+						</section>
 					</section>
 					<section>
 						<h4>Checksum Expressions</h4>
@@ -1684,6 +1717,17 @@ simon,57,male
 							</tr>
 						</table>
 					</section>
+						<section>
+							<h5>Usage</h5>
+							<pre class="example" data-lt="Lower Case Expression Syntax">
+	file_path: uri                                                           //a full filepath for a file
+	file_name:                                                               //a filename only for a file
+	a_column: checksum(file($file_path),"SHA-256")                           /*a_column contains the SHA-256 checksum value supplied for the file, the validator
+                                                                               then computes the checksum for the file at file_path and reports an error if they do not match*/
+	another_column: checksum(file("file:///C:/my_folder/",$file_name),"MD5") /*here the string "file:///C:/my_folder" is prepended to the contents of file_name before the 
+	                                                                           checksum verification is performed, another_column has an MD5 checksum value in it
+							</pre>
+						</section>
 					<section>
 						<h4>File Count Expressions</h4>
 						<p>
