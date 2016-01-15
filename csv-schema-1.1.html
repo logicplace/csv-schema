@@ -1667,6 +1667,8 @@ simon,57,male
 						The default value for this string is an empty string.
 						The second parameter allows a string provider to be given to point to an explicit subdirectory relative to the location of the base path.
 						By default this subdirectory is expected to be called "content".
+						If only a single OPTIONAL parameter is supplied, it will be assumed to be the first, so if you wish to set only the second OPTIONAL parameter,
+						you MUST also explicitly supply the first as an empty string ("")
 						The final expression MUST be supplied.  This indicates whether references to subfolders are explicitly included in the CSV file, 
 						if the CSV file has a row for each subfolder the exact string "includeFolder" should be given, 
 						if the subfolders do not have explicit references, the exact string "excludeFolder" should be given.
@@ -1691,7 +1693,7 @@ simon,57,male
 																    as the second parameter has not been supplied it defaults to the value "content" meaning that all sub folders must
 																	sit within a folder with that name*/
 	another_column: integrityCheck("file:///C:/","excludeFolder") //here the string "file:///C:/" is prepended to the contents of another_column before the integrity check is made
-	third_column: integrityCheck("","excludeFolder")              //here as an empty string is included, we indicate that there is no content folder
+	third_column: integrityCheck("","","excludeFolder")           //here as an strings are passed for both optional parameters, we indicate that there is no content folder
 							</pre>
 						</section>
 					</section>
