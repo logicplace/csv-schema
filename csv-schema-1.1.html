@@ -1822,18 +1822,18 @@ simon,57,male
 							<td class="ebnf-right">"noExt(" <a>StringProvider</a> ")"</td> 
 						</tr>
 					</table>
-						<section>
-							<h5>Usage</h5>
-							<pre class="example" data-lt="File Count Expression Syntax">
-	a_column: is("no file")                                      //a full filepath for a folder
-	another_column: any("file:///","http://") //another_column contains an integer value, this is checked against the number of files in the file system folder at file_path
+					<section>
+						<h4>Usage</h4>
+						<pre class="example" data-lt="Concatenation Expression Syntax">
+	a_column: is("no file")                                     
+	another_column: any("file:///","http://")
 	third_column: any("C:","example.com")
 	fourth_column: ends(".html")
 	fifth_column: is($a_column) or is(concat($another_column,$third_column,"/",noExt(fourth_column),".pdf")
 	/*in this rather artificial example, fifth_column must be either "no file" (the value of a_column) or a PDF file with the same basic name as the HTML file named in fourth_column,
 	  located at either file:///C:/ or http://example.com/ (in fact as written you could have file:///example.com/ or http://C:/ as well)*/
-							</pre>
-						</section>
+						</pre>
+					</section>
 	 			</section>
 				<section>
 					<h3>Parenthesized Expressions</h3>
@@ -1886,6 +1886,18 @@ simon,57,male
 							<td class="ebnf-right">"if(" (<a>CombinatorialExpr</a> | <a>NonConditionalExpr</a>) "," <a>ColumnValidationExpr</a>+ ("," <a>ColumnValidationExpr</a>+)? ")"</td>
 						</tr>
 					</table>
+					<section>
+						<h4>Usage</h4>
+						<pre class="example" data-lt="If Expression Syntax">
+	a_column: any("true","false")
+	another_column: any("yes","no")
+	third_column: if($a_column\is("true"),is("some string"),is("some other string")) /*here we look to the value of a_column, if it is "true", third_column must be "some string"
+	                                                                                   otherwise third_column must be "some other string"*/
+	fourth_column: if(($a_column\is("true") and $another_column\is("yes")),is("some string"),is("some other string"))
+	//in fourth_column we use a more complicated combinatorial expression as the initial test, if both a_column is "true" and another_column is "yes", 
+	//then fourth_column is "some string", otherwise fourth_column is "some other string".  All column expressions could be used for the test etc, only is is used for simpilcity
+						</pre>
+					</section>
 				</section>
 				<section>
 					<h3>Switch Expressions</h3>
@@ -1922,12 +1934,27 @@ simon,57,male
 							<td class="ebnf-right">"("( <a>CombinatorialExpr</a> | <a>NonConditionalExpr</a>) "," <a>ColumnValidationExpr</a>+ ")"</td>
 						</tr>
 					</table>
+					<section>
+						<h4>Usage</h4>
+						<pre class="example" data-lt="If Expression Syntax">
+	a_column: any("true","false","unknown")
+	another_column: if($a_column\is("true"),is("some string"),if($a_column\is("false"),is("some other string"),is("some third string")))
+	/*here we look to the value of a_column, if it is "true", another_column must be "some string" otherwise, check if a another_column is "false), 
+	if so another_column must be "some other string", otherwise another_column is "some third string".  Nesting if statments like this can quickly get 
+	very difficult to read, so instead we can use the switch statement*/
+	third_column: switch(($a_column\is("true"),is("some string")),($a_column\is("false"),is("some other string")),is("some third string"))
+	//this switch statement for third_column is functionally identical to the nested if statement demonstrated on another_column, and is much easier to extend
+	//is there were additional options available for a_column, each bracketed pair such of test and column validation expression, 
+	//such as ($a_column\is("true"),is("some string")), is called a Switch Case Expression, as many as required are then followed by a final column validation expression,
+	//used if none of the Switch Case Expressions evaluate to true.
+						</pre>
+					</section>
 				</section>
 			</section>
 			<section>
 				<h2>Column Expression examples</h2>
 				<p>
-				Example usage for a range of <a title="Column Validation Expression">Column Expressions</a> is given below.  
+				Additional examples for a range of <a title="Column Validation Expression">Column Expressions</a> is given below.  
 				A greater range of example and other schemas actually used by The National Archives 
 				<a href="https://github.com/digital-preservation/csv-schema/tree/master/example-schemas">can be found on GitHub</a>.  
 				Most of these are extensively commented in order to explain usage.  There is a also a set of example files to be downloaded which allow 
