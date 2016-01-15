@@ -329,7 +329,7 @@ simon,57,male
 		In addition the <a>Range Expression</a> has been extended to allow the creation of ranges that have only an upper or lower bound using similar syntax to that employed by
 		the <a>Length Expression</a>. This also required the addition of <a>Numeric Or Any</a> type (to allow ranges to have negative values as bounds), or the <a>Wildcard Literal</a>. 
 		In the <a>Length Expression</a> we used only <a>Positive Integer Or Any</a> since a negative value has no sensible meaning for the length of a field.
-		There is also one new <a>Global Directive</a>, the <a>Permit Empty Directive</a>.  This allows a file with no data rows to be treated as valid.
+		There is also one new <a title="Global Directives">Global Directive</a>, the <a>Permit Empty Directive</a>.  This allows a file with no data rows to be treated as valid.
 		</p>
 	</section>
     <section>
@@ -1022,7 +1022,6 @@ simon,57,male
 							</pre>
 						</section>
 					</section>
-					</section>
 					<section>
 						<h4>Not Expressions</h4>
 						<p>
@@ -1043,7 +1042,6 @@ simon,57,male
 	another_column: not($a_column)   //the value of another_column must not be the value held in a_column
 							</pre>
 						</section>
-					</section>
 					</section>
 					<section>
 						<h4>In Expressions</h4>
@@ -1067,7 +1065,6 @@ simon,57,male
 							</pre>
 						</section>
 					</section>
-					</section>
 					<section>
 						<h4>Starts With Expressions</h4>
 						<p>
@@ -1089,7 +1086,6 @@ simon,57,male
 							</pre>
 						</section>
 					</section>
-					</section>
 					<section>
 						<h4>Ends With Expressions</h4>
 						<p>
@@ -1110,7 +1106,6 @@ simon,57,male
 	another_column: endsWith($a_column) //the value of another_column must end with the contents of a_column
 							</pre>
 						</section>
-					</section>
 					</section>
 					<section>
 						<h4>Regular Expression Expressions</h4>
@@ -1145,7 +1140,7 @@ simon,57,male
 						A <dfn>Range Expression</dfn> checks that the value of the column is a number lying between, or equal to, the supplied upper and lower bounds.  
 						One or other bounding value MAY be left unrestricted (by using the <a>Wildcard Literal</a>), 
 						so that the expression can also be used to check that a column is at least some value, or at most some value. 
-						One bounding value is defined as a <a>Numeric Or Any</a> expression which accepts a <a>Numeric Literal</a> (a Real Number expressed as a decimal), 
+						One bounding value is defined as a <dfn>Numeric Or Any</dfn> expression which accepts a <a>Numeric Literal</a> (a Real Number expressed as a decimal), 
 						or the <a>Wildcard Literal</a>, while the other is a <a>Numeric Literal</a> only. 
 						Therefore at least one of the bounding values MUST be a <a>Numeric Literal</a> rather than a <a>Wildcard Literal</a>, 
 						so valid Range Expressions SHALL define ranges of:
@@ -1606,7 +1601,7 @@ simon,57,male
 								Consider a file that is expected to contain data relating to one particular batch of a process, 
 								and should also be the data relating to one particular day.  Over time we will receive many such files, 
 								so we do not want to amend the schema each day to say what the valid date for the file is, or what the appropriate batch_code is.
-								Instead we give a generic rule for the field content: it's an <a>xDate Expression</a> in the case of batch_date; 
+								Instead we give a generic rule for the field content: it's an <a>XSD Date Expression</a> in the case of batch_date; 
 								or that the batch_code will comprise three to five uppercase letters, followed by an uppercase B, followed by three digits;
 								and for each row in the file every date must be identical and every batch_code must be identical.
 								</p>
@@ -1719,7 +1714,6 @@ simon,57,male
 								<td class="ebnf-right">"checksum(" <a>FileExpr</a> "," <a>StringLiteral</a> ")"</td> 
 							</tr>
 						</table>
-					</section>
 						<section>
 							<h5>Usage</h5>
 							<pre class="example" data-lt="Checksum Expression Syntax">
@@ -1731,6 +1725,7 @@ simon,57,male
 	                                                                           checksum verification is performed, another_column has an MD5 checksum value in it
 							</pre>
 						</section>
+					</section>
 					<section>
 						<h4>File Count Expressions</h4>
 						<p>
@@ -1783,7 +1778,6 @@ simon,57,male
 							</pre>
 						</section>
 					</section>
-					</section>
 				</section>
 				<section>
 					<h3>Input parameters used in Single Expressions and External Single Expressions</h3>
@@ -1827,6 +1821,7 @@ simon,57,male
 							<td class="ebnf-bind">::=</td>
 							<td class="ebnf-right">"noExt(" <a>StringProvider</a> ")"</td> 
 						</tr>
+					</table>
 						<section>
 							<h5>Usage</h5>
 							<pre class="example" data-lt="File Count Expression Syntax">
@@ -1839,7 +1834,6 @@ simon,57,male
 	  located at either file:///C:/ or http://example.com/ (in fact as written you could have file:///example.com/ or http://C:/ as well)*/
 							</pre>
 						</section>
-					</table>
 	 			</section>
 				<section>
 					<h3>Parenthesized Expressions</h3>
@@ -1933,7 +1927,7 @@ simon,57,male
 			<section>
 				<h2>Column Expression examples</h2>
 				<p>
-				Example usage for a range of <a title="Column Expression">Column Expressions</a> is given below.  
+				Example usage for a range of <a title="Column Validation Expression">Column Expressions</a> is given below.  
 				A greater range of example and other schemas actually used by The National Archives 
 				<a href="https://github.com/digital-preservation/csv-schema/tree/master/example-schemas">can be found on GitHub</a>.  
 				Most of these are extensively commented in order to explain usage.  There is a also a set of example files to be downloaded which allow 
@@ -1970,9 +1964,9 @@ simon,57,male
 	                                                                   and in range 4 December 2013 - 4 March 2014 (from the midnight starting 4 December, 
 	                                                                   to last second of 4 March), in the UTC (Greenwich Meantime) timezone, 
 																	   else it must be blank (ie "image_split" is no).
-																	   As xDateTime, rather than xDateTimeTz, is specified, 
-																	   the use of the timezone component within the supplied date time is optional, eg both:
-																	   2013-12-05T12:34:00+00:00 and 2013-12-05T12:34:00 would be acceptable in the metadata/*
+                                                                       As xDateTime, rather than xDateTimeTz, is specified, 
+                                                                       the use of the timezone component within the supplied date time is optional, eg both:
+                                                                       2013-12-05T12:34:00+00:00 and 2013-12-05T12:34:00 would be acceptable in the metadata/*
 				</pre>
 			</section>
     	</section>
@@ -1983,7 +1977,7 @@ simon,57,male
 		Most <a title="Column Validation Expression">Column Validation Expressions</a> rely on a small number of underlying data types. Some of these are defined by means of a 
 		regular expression embedded in the EBNF as indicated by <a>xgc:regular-expression</a>.
 		There are 11 data types, <a>XSD Date Time Literal</a>, <a>XSD Date Literal</a>, <a>XSD Time Literal</a>, <a>UK Date Literal</a>, 
-		<a>Positive Non Zero Integer Literal</a>, <a>Positive Integer Literal</a>, <a>Numeric Literal</a>, <a>StringLiteral</a>, <a>Character Literal</a>, 
+		<a>Positive Non Zero Integer Literal</a>, <a>Positive Integer Literal</a>, <a>Numeric Literal</a>, <a>String Literal</a>, <a>Character Literal</a>, 
 		<a>Wildcard Literal</a> and <a>Identifier</a>.
 		</p>
 		<section>
