@@ -1250,7 +1250,6 @@ simon,57,male
 								<td class="ebnf-right">"unique" ("(" <a>ColumnRef</a> ("," <a>ColumnRef</a>)* ")")?</td> 
 							</tr>
 						</table>	
-					</section>
 						<section>
 							<h5>Usage</h5>
 							<pre class="example" data-lt="Unique Expression Syntax">
@@ -1258,10 +1257,11 @@ simon,57,male
 	another_column: unique($a_column,$another_column) //the combination of values in the two columns must be unique looking across each row of the CSV file
 							</pre>
 						</section>
+					</section>
 					<section>
 						<h4>URI Expressions</h4>
 					<p>
-					A <dfn>URI Expression</dfn> means that the value in the column MSUT be a valid URI as defined in [[!RFC3986]].
+					A <dfn>URI Expression</dfn> means that the value in the column MUST be a valid URI as defined in [[!RFC3986]].
 					</p>
 						<table class="ebnf-table">
 							<tr>
